@@ -18,13 +18,14 @@ export const CustomerForm: React.FC<{
     city: "",
     state: "",
     pincode: "",
-    amc: { maintain: false, day: -1, week: -1, employee: "" },
+    amc: { day: -1, week: -1, employee: "" },
+    hasAmc: false,
   };
   const [open, setOpen] = useState<boolean>(false);
   const [editContact, setEditContact] = useState({});
   const [cpIndex, setCpIndex] = useState<number>(-1);
-  const [amcWeek, setAmcWeek] = useState<string>("Week");
-  const [amcDay, setAmcDay] = useState<string>("Day");
+  const [amcWeek, setAmcWeek] = useState<string[]>(["Week"]);
+  const [amcDay, setAmcDay] = useState<string[]>(["Day"]);
   const [users, setUsers] = useState<{ name: string; _id: string }[]>([]);
   const [closeFunc, setCloseFunc] = useState<() => () => void>(() => () => {});
   const [editing, setEditing] = useState<boolean>(false);
@@ -33,6 +34,36 @@ export const CustomerForm: React.FC<{
   //   mobileNo: string;
   // }>({ contactEmail: "", mobileNo: "" });
   const { values, setValues, handleInput } = useForm(initialVal);
+  const handleAmcWeekChange = (
+    week: number,
+    position: number,
+    weekName: string
+  ) => {
+    const oldAmc = [...values.amc];
+    oldAmc[position] = { ...values.amc[position], week };
+    const oldAmcWeek = [...amcWeek];
+    oldAmcWeek[position] = weekName;
+    setAmcWeek([...oldAmcWeek]);
+    setValues({
+      ...values,
+      amc: [...oldAmc],
+    });
+  };
+  const handleAmcDayChange = (
+    day: number,
+    position: number,
+    weekName: string
+  ) => {
+    const oldAmc = [...values.amc];
+    oldAmc[position] = { ...values.amc[position], day };
+    const oldAmcDay = [...amcDay];
+    oldAmcDay[position] = weekName;
+    setAmcDay([...oldAmcDay]);
+    setValues({
+      ...values,
+      amc: [...oldAmc],
+    });
+  };
   const addContact = (contact: {
     name: string;
     email: string;
@@ -77,7 +108,7 @@ export const CustomerForm: React.FC<{
     "Friday",
     "Saturday",
   ];
-  const weekNames: string[] = ["1st", "2nd", "3rd", "4th"];
+  const weekNames: string[] = ["Weekly", "1st", "2nd", "3rd", "4th"];
   useEffect(() => {
     authService.getUsers(setUsers);
   }, []);
@@ -89,13 +120,24 @@ export const CustomerForm: React.FC<{
     if (editData._id) {
       setEditing(true);
       setValues(editData);
-      if (editData.amc.maintain) {
-        if (editData.amc.week === 0) {
-          setAmcWeek("Daily");
-        } else {
-          setAmcWeek(weekNames[editData.amc.week - 1]);
-          setAmcDay(dayNames[editData.amc.day]);
-        }
+      if (editData.hasAmc) {
+        const newAmcWeek: string[] = [];
+        const newAmcDay: string[] = [];
+        editData.amc.forEach(
+          (
+            amcData: { week: number; day: number; employee: string },
+            i: number
+          ) => {
+            if (amcData.week === 0 && amcData.day === -1) {
+              newAmcWeek[i] = "Daily";
+            } else {
+              newAmcWeek[i] = weekNames[amcData.week];
+              newAmcDay[i] = dayNames[amcData.day];
+            }
+          }
+        );
+        setAmcWeek(newAmcWeek);
+        setAmcDay(newAmcDay);
       }
     } else {
       setEditing(false);
@@ -192,124 +234,170 @@ export const CustomerForm: React.FC<{
             onChange={() =>
               setValues({
                 ...values,
-                amc: { ...values.amc, maintain: !values.amc.maintain },
+                hasAmc: !values.hasAmc,
               })
             }
-            checked={values.amc.maintain}
+            checked={values.hasAmc}
           />
           <span className="m-l-16">AMC</span>
         </div>
-        {values.amc.maintain && (
-          <div className="df-ac-jsb wd-100p">
-            <Controls.DropDown
-              placeholder={amcWeek}
-              options={["1st", "2nd", "3rd", "4th", "Daily"]}
-              handleInput={(option: string) => {
-                switch (option) {
-                  case "1st":
-                    setAmcWeek("1st");
-                    setValues({ ...values, amc: { ...values.amc, week: 1 } });
-                    break;
-                  case "2nd":
-                    setAmcWeek("2nd");
-                    setValues({ ...values, amc: { ...values.amc, week: 2 } });
-                    break;
-                  case "3rd":
-                    setAmcWeek("3rd");
-                    setValues({ ...values, amc: { ...values.amc, week: 3 } });
-                    break;
-                  case "4th":
-                    setAmcWeek("4th");
-                    setValues({ ...values, amc: { ...values.amc, week: 4 } });
-                    break;
-                  case "Daily":
-                    setAmcWeek("Daily");
-                    setValues({ ...values, amc: { ...values.amc, week: 0 } });
-                    break;
-                  default:
-                    return;
-                }
-              }}
-              dropClsss="amc-week"
-            />
-            {amcWeek !== "Daily" && (
-              <Controls.DropDown
-                placeholder={amcDay}
-                options={[
-                  "Sunday",
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                ]}
-                handleInput={(option: string) => {
-                  switch (option) {
-                    case "Sunday":
-                      setAmcDay("Sunday");
-                      setValues({ ...values, amc: { ...values.amc, day: 0 } });
-                      break;
-                    case "Monday":
-                      setAmcDay("Monday");
-                      setValues({ ...values, amc: { ...values.amc, day: 1 } });
-                      break;
-                    case "Tuesday":
-                      setAmcDay("Tuesday");
-                      setValues({ ...values, amc: { ...values.amc, day: 2 } });
-                      break;
-                    case "Wednesday":
-                      setAmcDay("Wednesday");
-                      setValues({ ...values, amc: { ...values.amc, day: 3 } });
-                      break;
-                    case "Thursday":
-                      setAmcDay("Thursday");
-                      setValues({ ...values, amc: { ...values.amc, day: 4 } });
-                      break;
-                    case "Friday":
-                      setAmcDay("Friday");
-                      setValues({ ...values, amc: { ...values.amc, day: 5 } });
-                      break;
-                    case "Saturday":
-                      setAmcDay("Saturday");
-                      setValues({ ...values, amc: { ...values.amc, day: 6 } });
-                      break;
-                    default:
-                      return;
-                  }
-                }}
-                dropClsss="amc-week"
-                btnClass="m-l-8"
-              />
-            )}
-            <Controls.SearchBox
-              //@ts-ignore:next-line
-              iniVal={
-                editData.amc
-                  ? users.find(
-                      (user: { name: string; _id: string }) =>
-                        user._id === editData.amc.employee
-                    )
-                  : ""
+        {values.hasAmc && (
+          <>
+            {values.amc.map(
+              (
+                amcData: { week: number; day: number; employee: string },
+                i: number
+              ) => {
+                return (
+                  <div
+                    className="df-ac-jsb wd-100p"
+                    key={amcData.employee + amcData.day}
+                  >
+                    <Controls.DropDown
+                      placeholder={amcWeek[i]}
+                      options={["1st", "2nd", "3rd", "4th", "Daily", "Weekly"]}
+                      handleInput={(option: string) => {
+                        switch (option) {
+                          case "1st":
+                            handleAmcWeekChange(1, i, option);
+                            break;
+                          case "2nd":
+                            handleAmcWeekChange(2, i, option);
+                            break;
+                          case "3rd":
+                            handleAmcWeekChange(3, i, option);
+                            break;
+                          case "4th":
+                            handleAmcWeekChange(4, i, option);
+                            break;
+                          case "Daily":
+                          case "Weekly":
+                            handleAmcWeekChange(0, i, option);
+                            break;
+                          default:
+                            return;
+                        }
+                      }}
+                      dropClsss="amc-week"
+                    />
+                    {amcWeek[i] !== "Daily" && (
+                      <Controls.DropDown
+                        placeholder={amcDay[i]}
+                        options={[
+                          "Sunday",
+                          "Monday",
+                          "Tuesday",
+                          "Wednesday",
+                          "Thursday",
+                          "Friday",
+                          "Saturday",
+                        ]}
+                        handleInput={(option: string) => {
+                          switch (option) {
+                            case "Sunday":
+                              handleAmcDayChange(0, i, option);
+                              break;
+                            case "Monday":
+                              handleAmcDayChange(1, i, option);
+                              break;
+                            case "Tuesday":
+                              handleAmcDayChange(2, i, option);
+                              break;
+                            case "Wednesday":
+                              handleAmcDayChange(3, i, option);
+                              break;
+                            case "Thursday":
+                              handleAmcDayChange(4, i, option);
+                              break;
+                            case "Friday":
+                              handleAmcDayChange(5, i, option);
+                              break;
+                            case "Saturday":
+                              handleAmcDayChange(6, i, option);
+                              break;
+                            default:
+                              return;
+                          }
+                        }}
+                        dropClsss="amc-week"
+                        btnClass="m-l-8"
+                      />
+                    )}
+                    <Controls.SearchBox
+                      //@ts-ignore:next-line
+                      iniVal={
+                        editData.amc
+                          ? users.find(
+                              (user: { name: string; _id: string }) =>
+                                user._id === amcData.employee
+                            )
+                          : ""
+                      }
+                      placeholder="Employee"
+                      options={users}
+                      className="m-l-8 search-box"
+                      onChange={(selected: { name: string; _id: string }[]) => {
+                        if (selected.length > 0) {
+                          const oldAmc = [...values.amc];
+                          oldAmc[i] = {
+                            ...values.amc[i],
+                            employee: selected[0]._id,
+                          };
+                          setValues({
+                            ...values,
+                            amc: oldAmc,
+                          });
+                        } else {
+                          const oldAmc = [...values.amc];
+                          oldAmc[i] = {
+                            ...values.amc[i],
+                            employee: "",
+                          };
+                          setValues({
+                            ...values,
+                            amc: oldAmc,
+                          });
+                        }
+                      }}
+                    />
+                    <button
+                      className="remove-amc m-l-4"
+                      onClick={() => {
+                        const updatedAmc = [...values.amc];
+                        updatedAmc.splice(i, 1);
+                        setValues((prevVal: any) => ({
+                          ...prevVal,
+                          amc: updatedAmc,
+                        }));
+                      }}
+                    >
+                      X
+                    </button>
+                  </div>
+                );
               }
-              placeholder="Employee"
-              options={users}
-              className="m-l-8 search-box"
-              onChange={(selected: { name: string; _id: string }[]) => {
-                if (selected.length > 0) {
-                  setValues({
-                    ...values,
-                    amc: { ...values.amc, employee: selected[0]._id },
-                  });
-                } else {
-                  setValues({
-                    ...values,
-                    amc: { ...values.amc, employee: "" },
-                  });
-                }
+            )}
+            <button
+              className="btn btn-info"
+              onClick={() => {
+                setValues((prevVal: any) => ({
+                  ...prevVal,
+                  amc: [
+                    ...prevVal.amc,
+                    {
+                      week: 1,
+                      day: 0,
+                      employee: "",
+                    },
+                  ],
+                }));
+                setAmcWeek((prevVal: string[]) => [...prevVal, "Week"]);
+                setAmcDay((prevVal: string[]) => [...prevVal, "Sunday"]);
               }}
-            />
-          </div>
+            >
+              Add Amc
+            </button>
+          </>
         )}
         <button className="btn btn-primary m-t-16" onClick={handleSubmit}>
           Submit

@@ -23,7 +23,7 @@ const getRoutes = (auth: string) => {
       return (
         <>
           <Route path="/" element={<Logout />} />
-          <Route path="/resgister" element={<Logout />} />
+          <Route path="/register" element={<Logout />} />
           <Route path="/login" element={<Logout />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/sales" element={<Sales />} />
@@ -38,7 +38,7 @@ const getRoutes = (auth: string) => {
       return (
         <>
           <Route path="/" element={<Logout />} />
-          <Route path="/resgister" element={<Logout />} />
+          <Route path="/register" element={<Logout />} />
           <Route path="/login" element={<Logout />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
