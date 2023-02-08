@@ -18,7 +18,7 @@ export const CustomerForm: React.FC<{
     city: "",
     state: "",
     pincode: "",
-    amc: { day: -1, week: -1, employee: "" },
+    amc: [],
     hasAmc: false,
   };
   const [open, setOpen] = useState<boolean>(false);

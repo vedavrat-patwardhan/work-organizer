@@ -5,7 +5,11 @@ import "./Styles/App.css";
 const App: React.FC = () => {
   return (
     <div className="dfc-ac-jse ht-100vh bgc-primary">
-      <img src="https://logiccrm.blob.core.windows.net/logic-data/logic logo.png" alt="logo" width="225" />
+      <img
+        src="https://logicnskstorage.blob.core.windows.net/crm-images/Logo.png"
+        alt="logo"
+        width="225"
+      />
       <div className="app-card">
         <Link to="/login" className="form-btn m-b-16">
           Login

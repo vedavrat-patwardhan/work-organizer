@@ -19,6 +19,7 @@ import { ActionTable } from "../Components/Popups/ActionTable";
 import { PageHeading } from "../Components/PageHeading";
 import { StoreModel } from "../Models/StoreModel";
 import { connect } from "react-redux";
+import SalesForm from "../Components/Popups/SalesForm";
 
 const Dashboard: React.FC<StoreModel> = ({ auth }) => {
   const [closeFuncAction, setCloseFuncAction] = useState<() => () => void>(
@@ -94,7 +95,7 @@ const Dashboard: React.FC<StoreModel> = ({ auth }) => {
   const getTableStructure = () => {
     return auth.includes("user")
       ? filteredTableData.map((cell) => [
-          <div className="dfc-as">
+          <div className="dfc-as" key={cell.id}>
             <span className="dfc-as">{cell.id}</span>
             <span className="wd-max-cont">{cell.companyName.name}</span>
             <Apartment
@@ -300,15 +301,27 @@ const Dashboard: React.FC<StoreModel> = ({ auth }) => {
           closeFuncDashboard();
         }}
         data={
-          <DashboardForm
-            setUpdate={setUpdate}
-            handleClose={() => {
-              setOpenForm(false);
-              closeFuncDashboard();
-            }}
-            setCloseFunc={setCloseFuncDashboard}
-            editData={editData}
-          />
+          auth.includes("sales") ? (
+            <SalesForm
+              setUpdate={setUpdate}
+              handleClose={() => {
+                setOpenForm(false);
+                closeFuncDashboard();
+              }}
+              setCloseFunc={setCloseFuncDashboard}
+              editData={editData}
+            />
+          ) : (
+            <DashboardForm
+              setUpdate={setUpdate}
+              handleClose={() => {
+                setOpenForm(false);
+                closeFuncDashboard();
+              }}
+              setCloseFunc={setCloseFuncDashboard}
+              editData={editData}
+            />
+          )
         }
         heading="Add Call"
       />

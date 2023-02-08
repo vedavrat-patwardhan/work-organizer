@@ -25,6 +25,21 @@ export const getTypesOfProblem = [
   { name: "Virus" },
 ];
 
+export const getTypesOfSales = [
+  { name: "CCTV" },
+  { name: "Projector" },
+  { name: "IFP" },
+  { name: "Laptop" },
+  { name: "Desktop" },
+  { name: "Projector Accessories" },
+  { name: "Home Security" },
+  { name: "Mural" },
+  { name: "Network" },
+  { name: "Software" },
+  { name: "Cloud" },
+  { name: "Black Box" },
+];
+
 export const getDescriptions = [
   { name: "Collect" },
   { name: "Repair" },
