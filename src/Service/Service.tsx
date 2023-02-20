@@ -4,11 +4,11 @@ import {
   UserRegisterModel,
   UsersModel,
 } from "../Models/PagesModel";
-import { bearerInstance, contentInstace } from "./Interceptors";
+import { bearerInstance, contentInstance } from "./Interceptors";
 
 export const authService = {
   userRegistration(data: UserRegisterModel, resetForm: () => void) {
-    contentInstace
+    contentInstance
       .post(
         `${process.env.REACT_APP_API_KEY}/register/user?adminMail=${data.adminMail}&adminPassword=${data.adminPassword}`,
         data

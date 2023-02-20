@@ -35,6 +35,7 @@ const SalesForm: React.FC<{
     contactPerson: "",
     email: "",
     mobile: [],
+    isSales: true,
     assignedEmployeeId: "6275707cf1b4028faf6cd004",
     callStatus: "Unallocated",
     startDate: new Date(),

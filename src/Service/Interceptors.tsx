@@ -19,11 +19,11 @@ bearerInstance.interceptors.request.use(
   }
 );
 
-export const contentInstace = axios.create({
+export const contentInstance = axios.create({
   baseURL: `${process.env.REACT_APP_API_KEY}`,
 });
 
-contentInstace.interceptors.request.use(
+contentInstance.interceptors.request.use(
   (config: any) => {
     config.headers["Content-Type"] = "application/json";
     return config;
