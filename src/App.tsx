@@ -6,7 +6,7 @@ const App: React.FC = () => {
   return (
     <div className="dfc-ac-jse ht-100vh bgc-primary">
       <img
-        src="https://logicnskstorage.blob.core.windows.net/crm-images/Logo.png"
+        src="https://logiccrmstorage.blob.core.windows.net/crm/Logo.png"
         alt="logo"
         width="225"
       />

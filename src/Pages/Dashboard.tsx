@@ -275,7 +275,9 @@ const Dashboard: React.FC<StoreModel> = ({ auth }) => {
         <div className="content__box">
           <TableSorting
             search={search}
-            searchPlaceHolder={"Search by Call ID/ Company Name/ Employee"}
+            searchPlaceHolder={
+              "Search by Call ID/ Company Name/ Employee/ Status"
+            }
             handleSearch={handleSearch}
             filterPlaceholder={filters ? filters : "Filter"}
             handleFilter={handleFilter}
