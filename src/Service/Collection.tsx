@@ -23,6 +23,7 @@ export const getTypesOfProblem = [
   { name: "Toners" },
   { name: "UPS" },
   { name: "Virus" },
+  { name: "Firewall" },
 ];
 
 export const getTypesOfSales = [

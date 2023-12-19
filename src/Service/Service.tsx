@@ -219,14 +219,19 @@ export const reportService = {
       });
   },
   employeeReport(
-    data: { employeeId: string; startDate: number; endDate: number },
-    genEmployeeReport: (data: any) => void
+    data: {
+      employeeId: string;
+      startDate: number;
+      endDate: number;
+      isWhole: boolean;
+    },
+    genEmployeeReport: (data: any, isWhole: boolean) => void
   ) {
     bearerInstance
       .get(
         `${process.env.REACT_APP_API_KEY}/employee-report/${data.employeeId}/${data.startDate}/${data.endDate}`
       )
-      .then((res) => genEmployeeReport(res.data))
+      .then((res) => genEmployeeReport(res.data, data.isWhole))
       .catch((err: any) => console.error(err));
   },
 };

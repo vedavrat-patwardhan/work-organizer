@@ -18,20 +18,22 @@ const Reports: React.FC = () => {
     companyStart: "",
     companyEnd: "",
   };
-  const userEl = useRef(null);
+  const userPartialEl = useRef(null);
+  const userWholeEl = useRef(null);
   const companyEl = useRef(null);
 
   const [users, setUsers] = useState<{ name: string; _id: string }[]>([]);
   const [companies, setCompanies] = useState<{ name: string; _id: string }[]>(
     []
   );
-  const [csvUserData, setCsvUserData] = useState<any[]>([]);
+  const [csvUserPartialData, setCsvUserPartialData] = useState<any[]>([]);
+  const [csvUserWholeData, setCsvUserWholeData] = useState<any[]>([]);
   const [csvCompanyData, setCsvCompanyData] = useState<any[]>([]);
 
   const [companyName, setCompanyName] = useState("");
   const [userName, setUserName] = useState("");
 
-  const genUserReport = (data: any) => {
+  const genUserReport = (data: any, isWhole: boolean) => {
     const csvData = [
       [
         "ID",
@@ -56,9 +58,20 @@ const Reports: React.FC = () => {
         element.registeredBy.name,
       ]);
     });
-    setCsvUserData([...csvData]);
-    //@ts-ignore
-    userEl.current.link.click();
+    if (isWhole) {
+      setCsvUserWholeData([...csvData]);
+      //@ts-ignore
+      userWholeEl.current.link.click();
+    } else {
+      setCsvUserPartialData([
+        ["ID", "Company Name", "Problem Type"],
+        ...data.map((item: any) => {
+          return [item.id, item.companyName.name, item.problemType];
+        }),
+      ]);
+      //@ts-ignore
+      userPartialEl.current.link.click();
+    }
   };
   const genCompanyReport = (data: any) => {
     const csvData = [
@@ -90,16 +103,30 @@ const Reports: React.FC = () => {
     companyEl.current.link.click();
   };
 
-  const handleUserReport = () => {
+  const handleUserPartialReport = () => {
     reportService.employeeReport(
       {
         employeeId: values.user,
         startDate: new Date(values.userStart).getTime(),
         endDate: new Date(values.userEnd).getTime(),
+        isWhole: false,
       },
       genUserReport
     );
   };
+
+  const handleUserWholeReport = () => {
+    reportService.employeeReport(
+      {
+        employeeId: values.user,
+        startDate: new Date(values.userStart).getTime(),
+        endDate: new Date(values.userEnd).getTime(),
+        isWhole: true,
+      },
+      genUserReport
+    );
+  };
+
   const handleCompanyReport = () => {
     reportService.companyReport(
       {
@@ -172,14 +199,29 @@ const Reports: React.FC = () => {
                 </td>
                 <td>
                   <button
-                    className="btn btn-success"
-                    onClick={handleUserReport}
+                    className="btn btn-success m-r-8"
+                    onClick={handleUserPartialReport}
                   >
-                    Generate
+                    Partial
                   </button>
                   <CSVLink
-                    ref={userEl}
-                    data={csvUserData}
+                    ref={userPartialEl}
+                    data={csvUserPartialData}
+                    filename={
+                      userName ? userName.replace(/[^a-zA-Z ]/g, "") : userName
+                    }
+                    className="display-none"
+                    target="_blank"
+                  />
+                  <button
+                    className="btn btn-info"
+                    onClick={handleUserWholeReport}
+                  >
+                    Whole
+                  </button>
+                  <CSVLink
+                    ref={userWholeEl}
+                    data={csvUserWholeData}
                     filename={
                       userName ? userName.replace(/[^a-zA-Z ]/g, "") : userName
                     }
